@@ -174,7 +174,7 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-14 19:01:33 UTC")
+        timestamp_label = QLabel("Created: 2024-11-14 19:25:08 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -185,8 +185,89 @@ class TicTacToeWindow(QMainWindow):
         # Update player labels
         self.update_player_labels()
 
-    # [Previous methods remain the same: make_move, draw_winning_line, 
-    # get_winning_combination, check_winner, is_board_full, disable_board]
+    def make_move(self, row, col):
+        """Handle a player's move"""
+        if self.board[row][col] == '' and not self.check_winner():
+            # Update board and button
+            self.board[row][col] = self.current_player
+            self.buttons[row][col].setText(self.current_player)
+            
+            # Check for win or draw
+            if self.check_winner():
+                winner_name = self.player1_name if self.current_player == 'X' else self.player2_name
+                self.status_label.setText(f"{winner_name} wins!")
+                self.draw_winning_line()
+                self.disable_board()
+            elif self.is_board_full():
+                self.status_label.setText("Game Draw!")
+                self.disable_board()
+            else:
+                # Switch players
+                self.current_player = 'O' if self.current_player == 'X' else 'X'
+                current_name = self.player2_name if self.current_player == 'O' else self.player1_name
+                self.status_label.setText(f"{current_name}'s turn ({self.current_player})")
+                self.update_player_labels()
+
+    def draw_winning_line(self):
+        """Draw a line through the winning combination"""
+        winning_combo = self.get_winning_combination()
+        if winning_combo:
+            # Remove existing line if present
+            if self.winning_line:
+                self.winning_line.deleteLater()
+            
+            # Calculate start and end positions for the line
+            start_button = self.buttons[winning_combo[0][0]][winning_combo[0][1]]
+            end_button = self.buttons[winning_combo[2][0]][winning_combo[2][1]]
+            
+            # Get the global positions relative to the game container
+            start_global_pos = start_button.mapTo(self.game_container, 
+                                                QPoint(start_button.width()//2, 
+                                                      start_button.height()//2))
+            end_global_pos = end_button.mapTo(self.game_container, 
+                                            QPoint(end_button.width()//2, 
+                                                  end_button.height()//2))
+            
+            # Create and show the winning line
+            self.winning_line = WinningLine(start_global_pos, end_global_pos, self.game_container)
+            self.winning_line.setGeometry(0, 0, 
+                                        self.game_container.width(), 
+                                        self.game_container.height())
+            self.winning_line.show()
+
+    def get_winning_combination(self):
+        """Return the winning combination if there is one"""
+        # Check rows
+        for row in range(3):
+            if self.board[row][0] == self.board[row][1] == self.board[row][2] != '':
+                return [(row, 0), (row, 1), (row, 2)]
+        
+        # Check columns
+        for col in range(3):
+            if self.board[0][col] == self.board[1][col] == self.board[2][col] != '':
+                return [(0, col), (1, col), (2, col)]
+        
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != '':
+            return [(0, 0), (1, 1), (2, 2)]
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != '':
+            return [(0, 2), (1, 1), (2, 0)]
+        
+        return None
+
+    def check_winner(self):
+        """Check if there is a winner"""
+        return self.get_winning_combination() is not None
+
+    def is_board_full(self):
+        """Check if the board is full (draw)"""
+        return all(all(cell != '' for cell in row) for row in self.board)
+
+    def disable_board(self):
+        """Disable all buttons on the board"""
+        for row in self.buttons:
+            for button in row:
+                button.setEnabled(False)
 
     def update_player_labels(self):
         inactive_style = """
@@ -215,13 +296,3 @@ class TicTacToeWindow(QMainWindow):
         
         self.current_player = 'X'
         self.board = [['' for _ in range(3)] for _ in range(3)]
-        self.status_label.setText(f"{self.player1_name}'s turn (X)")
-        
-        self.p1_label.setText(f"{self.player1_name} (X)")
-        self.p2_label.setText(f"{self.player2_name} (O)")
-        self.update_player_labels()
-        
-        for row in self.buttons:
-            for button in row:
-                button.setText('')
-                button.setEnabled(True)
