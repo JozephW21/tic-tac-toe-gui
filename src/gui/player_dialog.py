@@ -8,7 +8,7 @@ class PlayerNameDialog(QDialog):
         super().__init__()
         self.setWindowTitle("Enter Player Names")
         self.setModal(True)
-        self.setFixedSize(500, 300)  # Increased window size
+        self.setFixedSize(600, 400)  # Even larger window size
         
         # Set background color
         self.setStyleSheet("""
@@ -17,19 +17,19 @@ class PlayerNameDialog(QDialog):
             }
             QLabel {
                 color: #ECF0F1;
-                font-size: 16px;  /* Increased font size */
+                font-size: 18px;  /* Larger font size */
                 font-weight: bold;
-                margin: 5px;
+                margin: 8px;
             }
             QLineEdit {
-                padding: 12px;  /* Increased padding */
-                font-size: 16px;  /* Increased font size */
+                padding: 15px;  /* More padding */
+                font-size: 18px;  /* Larger font size */
                 border: 2px solid #3498DB;
-                border-radius: 8px;
+                border-radius: 10px;
                 background-color: #34495E;
                 color: #ECF0F1;
-                margin: 5px;
-                min-height: 20px;  /* Minimum height */
+                margin: 10px;
+                min-height: 30px;  /* Taller input fields */
             }
             QLineEdit:focus {
                 border: 2px solid #2ECC71;
@@ -38,12 +38,12 @@ class PlayerNameDialog(QDialog):
                 background-color: #3498DB;
                 color: white;
                 border: none;
-                padding: 15px 30px;  /* Increased padding */
-                font-size: 18px;  /* Increased font size */
+                padding: 20px 40px;  /* More padding */
+                font-size: 20px;  /* Larger font size */
                 font-weight: bold;
-                border-radius: 8px;
-                min-width: 200px;  /* Increased width */
-                margin: 20px;  /* Added margin */
+                border-radius: 10px;
+                min-width: 250px;  /* Wider button */
+                margin: 25px;
             }
             QPushButton:hover {
                 background-color: #2980B9;
@@ -54,42 +54,51 @@ class PlayerNameDialog(QDialog):
         """)
         
         layout = QVBoxLayout()
-        layout.setSpacing(20)  # Increased spacing
-        layout.setContentsMargins(40, 30, 40, 30)  # Increased margins
+        layout.setSpacing(25)  # More spacing between elements
+        layout.setContentsMargins(50, 40, 50, 40)  # Larger margins
         
-        # Title
+        # Title with more prominent styling
         title = QLabel("Welcome to Tic Tac Toe!")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("""
-            font-size: 32px;  /* Increased font size */
+            font-size: 36px;  /* Even larger title */
             color: #3498DB;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             font-weight: bold;
+            padding: 10px;
         """)
         layout.addWidget(title)
         
+        # Spacer after title
+        layout.addSpacing(20)
+        
         # Player 1 input
         p1_layout = QVBoxLayout()
-        p1_layout.setSpacing(8)  # Added spacing
+        p1_layout.setSpacing(12)  # More spacing
         p1_label = QLabel("Player 1 (X):")
         self.p1_input = QLineEdit()
         self.p1_input.setPlaceholderText("Enter name")
+        self.p1_input.setMinimumHeight(50)  # Taller input field
         p1_layout.addWidget(p1_label)
         p1_layout.addWidget(self.p1_input)
         
+        # Space between player inputs
+        layout.addLayout(p1_layout)
+        layout.addSpacing(20)
+        
         # Player 2 input
         p2_layout = QVBoxLayout()
-        p2_layout.setSpacing(8)  # Added spacing
+        p2_layout.setSpacing(12)  # More spacing
         p2_label = QLabel("Player 2 (O):")
         self.p2_input = QLineEdit()
         self.p2_input.setPlaceholderText("Enter name")
+        self.p2_input.setMinimumHeight(50)  # Taller input field
         p2_layout.addWidget(p2_label)
         p2_layout.addWidget(self.p2_input)
-        
-        # Add player inputs to main layout
-        layout.addLayout(p1_layout)
-        layout.addSpacing(10)  # Added spacing between inputs
         layout.addLayout(p2_layout)
+        
+        # Space before button
+        layout.addSpacing(20)
         
         # Start button
         button_layout = QHBoxLayout()
@@ -101,16 +110,19 @@ class PlayerNameDialog(QDialog):
         button_layout.addStretch()
         layout.addLayout(button_layout)
         
-        # Add timestamp and creator info
+        # Space before info
+        layout.addSpacing(20)
+        
+        # Info section with updated styling
         info_layout = QVBoxLayout()
-        timestamp_label = QLabel("Created: 2024-11-14 18:40:50 UTC")
+        timestamp_label = QLabel("Created: 2024-11-14 18:43:24 UTC")
         creator_label = QLabel("Created by: JozephW21")
         
-        # Style info labels
         info_style = """
             color: #95A5A6;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 14px;  /* Slightly larger info text */
+            margin-top: 8px;
+            padding: 5px;
         """
         timestamp_label.setStyleSheet(info_style)
         creator_label.setStyleSheet(info_style)
@@ -121,6 +133,9 @@ class PlayerNameDialog(QDialog):
         info_layout.addWidget(timestamp_label)
         info_layout.addWidget(creator_label)
         layout.addLayout(info_layout)
+        
+        # Add final spacing
+        layout.addSpacing(10)
         
         self.setLayout(layout)
         
