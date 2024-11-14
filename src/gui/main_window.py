@@ -66,6 +66,18 @@ class TicTacToeWindow(QMainWindow):
         reset_button.clicked.connect(self.reset_game)
         main_layout.addWidget(reset_button)
         
+        # Add timestamp label
+        timestamp_label = QLabel("Created: 2024-11-14 18:25:21 UTC")
+        timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        timestamp_label.setFont(QFont('Arial', 8))
+        main_layout.addWidget(timestamp_label)
+        
+        # Add creator label
+        creator_label = QLabel("Created by: JozephW21")
+        creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        creator_label.setFont(QFont('Arial', 8))
+        main_layout.addWidget(creator_label)
+        
         # Highlight current player
         self.update_player_labels()
 
@@ -95,6 +107,33 @@ class TicTacToeWindow(QMainWindow):
             self.p1_label.setStyleSheet("font-weight: bold; color: blue")
         else:
             self.p2_label.setStyleSheet("font-weight: bold; color: blue")
+
+    def check_winner(self):
+        # Check rows
+        for row in range(3):
+            if self.board[row][0] == self.board[row][1] == self.board[row][2] != '':
+                return True
+        
+        # Check columns
+        for col in range(3):
+            if self.board[0][col] == self.board[1][col] == self.board[2][col] != '':
+                return True
+        
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != '':
+            return True
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != '':
+            return True
+        
+        return False
+
+    def is_board_full(self):
+        return all(all(cell != '' for cell in row) for row in self.board)
+
+    def disable_board(self):
+        for row in self.buttons:
+            for button in row:
+                button.setEnabled(False)
 
     def reset_game(self):
         # Ask for new player names
