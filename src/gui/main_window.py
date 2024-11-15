@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QPushButton, 
-                           QWidget, QLabel, QVBoxLayout, QFrame)
+                           QWidget, QLabel, QVBoxLayout, QFrame, QHBoxLayout)
 from PyQt6.QtCore import Qt, QLine, QPoint
 from PyQt6.QtGui import QFont, QPainter, QPen, QColor
 from .player_dialog import PlayerNameDialog
@@ -32,7 +32,7 @@ class WinningLine(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        pen = QPen(QColor("#E74C3C"), 8)  # Bright red color, thicker line
+        pen = QPen(QColor("#E74C3C"), 8)
         painter.setPen(pen)
         painter.drawLine(self.start_pos, self.end_pos)
 
@@ -40,7 +40,7 @@ class TicTacToeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tic Tac Toe")
-        self.setFixedSize(600, 800)  # Adjusted size
+        self.setFixedSize(600, 800)
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2C3E50;
@@ -50,7 +50,7 @@ class TicTacToeWindow(QMainWindow):
         # Initialize game variables
         self.current_player = 'X'
         self.board = [['' for _ in range(3)] for _ in range(3)]
-        self.buttons = []  # Moved initialization here
+        self.buttons = []
         self.winning_line = None
         
         # Get player names
@@ -59,7 +59,7 @@ class TicTacToeWindow(QMainWindow):
             self.player1_name, self.player2_name = dialog.get_player_names()
         else:
             self.player1_name, self.player2_name = "Player 1", "Player 2"
-        
+            
         # Initialize player stats
         self.player1_stats = PlayerStats(self.player1_name)
         self.player2_stats = PlayerStats(self.player2_name)
@@ -68,8 +68,8 @@ class TicTacToeWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         main_layout = QVBoxLayout(self.central_widget)
-        main_layout.setSpacing(10)  # Reduced spacing
-        main_layout.setContentsMargins(30, 20, 30, 20)  # Reduced margins
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(30, 20, 30, 20)
         
         # Title
         title = QLabel("Tic Tac Toe")
@@ -84,13 +84,13 @@ class TicTacToeWindow(QMainWindow):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(title)
         
-        # Player info layout with stats
+        # Player info layout
         player_frame = QFrame()
         player_frame.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
                 border-radius: 10px;
-                padding: 12px;
+                padding: 8px;
             }
             QLabel {
                 color: #ECF0F1;
@@ -115,10 +115,9 @@ class TicTacToeWindow(QMainWindow):
         info_layout.addWidget(self.p2_label, 0, 1)
         info_layout.addWidget(self.p1_stats_label, 1, 0)
         info_layout.addWidget(self.p2_stats_label, 1, 1)
-        
         main_layout.addWidget(player_frame)
         
-        # Game container with adjusted spacing
+        # Game container
         self.game_container = QFrame()
         self.game_container.setStyleSheet("""
             QFrame {
@@ -132,7 +131,7 @@ class TicTacToeWindow(QMainWindow):
         self.game_layout.setSpacing(10)
         main_layout.addWidget(self.game_container)
         
-        # Create game board buttons with adjusted styling
+        # Create game board buttons
         button_style = """
             QPushButton {
                 background-color: #2C3E50;
@@ -156,8 +155,8 @@ class TicTacToeWindow(QMainWindow):
             button_row = []
             for col in range(3):
                 button = QPushButton()
-                button.setFixedSize(120, 120)  # Reduced button size
-                button.setFont(QFont('Arial', 48))  # Reduced font size
+                button.setFixedSize(120, 120)
+                button.setFont(QFont('Arial', 48))
                 button.setStyleSheet(button_style)
                 button.clicked.connect(lambda checked, r=row, c=col: self.make_move(r, c))
                 self.game_layout.addWidget(button, row, col)
@@ -179,9 +178,32 @@ class TicTacToeWindow(QMainWindow):
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(self.status_label)
         
-        # Reset button
-        reset_button = QPushButton("Reset Game")
-        reset_button.setStyleSheet("""
+        # Buttons container
+        buttons_frame = QFrame()
+        buttons_layout = QHBoxLayout(buttons_frame)
+        buttons_layout.setSpacing(10)
+        
+        # Play Again button (same players)
+        play_again_button = QPushButton("Play Again")
+        play_again_button.setStyleSheet("""
+            QPushButton {
+                background-color: #2ECC71;
+                color: white;
+                padding: 12px;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 10px;
+                min-width: 160px;
+            }
+            QPushButton:hover {
+                background-color: #27AE60;
+            }
+        """)
+        play_again_button.clicked.connect(self.play_again)
+        
+        # New Game button (new players)
+        new_game_button = QPushButton("New Game")
+        new_game_button.setStyleSheet("""
             QPushButton {
                 background-color: #3498DB;
                 color: white;
@@ -195,10 +217,13 @@ class TicTacToeWindow(QMainWindow):
                 background-color: #2980B9;
             }
         """)
-        reset_button.clicked.connect(self.reset_game)
-        main_layout.addWidget(reset_button)
+        new_game_button.clicked.connect(self.new_game)
         
-        # Add timestamp and creator info
+        buttons_layout.addWidget(play_again_button)
+        buttons_layout.addWidget(new_game_button)
+        main_layout.addWidget(buttons_frame)
+        
+        # Info section
         info_frame = QFrame()
         info_frame.setStyleSheet("""
             QFrame {
@@ -210,7 +235,7 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-15 13:20:20 UTC")
+        timestamp_label = QLabel("Created: 2024-11-15 13:34:25 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -222,17 +247,14 @@ class TicTacToeWindow(QMainWindow):
         self.update_player_labels()
 
     def make_move(self, row, col):
-        """Handle a player's move"""
         if self.board[row][col] == '' and not self.check_winner():
-            # Update board and button
             self.board[row][col] = self.current_player
             self.buttons[row][col].setText(self.current_player)
             
-            # Check for win or draw
             if self.check_winner():
                 winner_name = self.player1_name if self.current_player == 'X' else self.player2_name
                 self.status_label.setText(f"{winner_name} wins!")
-                # Update stats for win/loss
+                # Update stats
                 if self.current_player == 'X':
                     self.player1_stats.add_win()
                     self.player2_stats.add_loss()
@@ -244,13 +266,11 @@ class TicTacToeWindow(QMainWindow):
                 self.disable_board()
             elif self.is_board_full():
                 self.status_label.setText("Game Draw!")
-                # Update stats for draw
                 self.player1_stats.add_draw()
                 self.player2_stats.add_draw()
                 self.update_stats_display()
                 self.disable_board()
             else:
-                # Switch players
                 self.current_player = 'O' if self.current_player == 'X' else 'X'
                 current_name = self.player2_name if self.current_player == 'O' else self.player1_name
                 self.status_label.setText(f"{current_name}'s turn ({self.current_player})")
@@ -260,6 +280,51 @@ class TicTacToeWindow(QMainWindow):
         """Update the stats display labels"""
         self.p1_stats_label.setText(self.player1_stats.get_stats_string())
         self.p2_stats_label.setText(self.player2_stats.get_stats_string())
+
+    def play_again(self):
+        """Reset the game board but keep the same players and their scores"""
+        if self.winning_line:
+            self.winning_line.deleteLater()
+            self.winning_line = None
+        
+        self.current_player = 'X'
+        self.board = [['' for _ in range(3)] for _ in range(3)]
+        
+        for row in self.buttons:
+            for button in row:
+                button.setText('')
+                button.setEnabled(True)
+        
+        self.status_label.setText(f"{self.player1_name}'s turn (X)")
+        self.update_player_labels()
+
+        def new_game(self):
+            if self.winning_line:
+                self.winning_line.deleteLater()
+                self.winning_line = None
+            
+        dialog = PlayerNameDialog()
+        if dialog.exec():
+            self.player1_name, self.player2_name = dialog.get_player_names()
+            self.player1_stats = PlayerStats(self.player1_name)
+            self.player2_stats = PlayerStats(self.player2_name)
+            
+            # Reset game state
+            self.current_player = 'X'
+            self.board = [['' for _ in range(3)] for _ in range(3)]
+            
+            # Clear and enable all buttons
+            for row in self.buttons:
+                for button in row:
+                    button.setText('')
+                    button.setEnabled(True)
+            
+            # Update labels
+            self.p1_label.setText(f"{self.player1_name} (X)")
+            self.p2_label.setText(f"{self.player2_name} (O)")
+            self.status_label.setText(f"{self.player1_name}'s turn (X)")
+            self.update_stats_display()
+            self.update_player_labels()
 
     def draw_winning_line(self):
         """Draw a line through the winning combination"""
@@ -319,6 +384,7 @@ class TicTacToeWindow(QMainWindow):
                 button.setEnabled(False)
 
     def update_player_labels(self):
+        """Update the player labels to show who's turn it is"""
         inactive_style = """
             color: #ECF0F1;
             font-weight: normal;
@@ -333,15 +399,3 @@ class TicTacToeWindow(QMainWindow):
             self.p1_label.setStyleSheet(active_style)
         else:
             self.p2_label.setStyleSheet(active_style)
-
-    def reset_game(self):
-        if self.winning_line:
-            self.winning_line.deleteLater()
-            self.winning_line = None
-            
-        dialog = PlayerNameDialog()
-        if dialog.exec():
-            self.player1_name, self.player2_name = dialog.get_player_names()
-        
-        self.current_player = 'X'
-        self.board = [['' for _ in range(3)] for _ in range(3)]
