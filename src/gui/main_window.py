@@ -21,7 +21,7 @@ class TicTacToeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tic Tac Toe")
-        self.setFixedSize(600, 700)  # Increased size for better layout
+        self.setFixedSize(700, 900)  # Increased height significantly to accommodate all elements
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2C3E50;
@@ -39,8 +39,8 @@ class TicTacToeWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         main_layout = QVBoxLayout(self.central_widget)
-        main_layout.setSpacing(30)
-        main_layout.setContentsMargins(40, 40, 40, 40)
+        main_layout.setSpacing(20)  # Reduced from 30 to 20
+        main_layout.setContentsMargins(40, 30, 40, 30)  # Adjusted margins
         
         # Title
         title = QLabel("Tic Tac Toe")
@@ -78,49 +78,30 @@ class TicTacToeWindow(QMainWindow):
         info_layout.addWidget(self.p2_label, 0, 1)
         main_layout.addWidget(player_frame)
         
-        # Game container
+        # Game container with adjusted spacing
         self.game_container = QFrame()
         self.game_container.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
                 border-radius: 15px;
-                padding: 20px;
+                padding: 30px;  /* Increased padding */
+                margin: 20px 0;  /* Added vertical margin */
             }
         """)
         self.game_layout = QGridLayout(self.game_container)
-        self.game_layout.setSpacing(10)
+        self.game_layout.setSpacing(15)  # Increased spacing between buttons
         main_layout.addWidget(self.game_container)
         
-        # Initialize game variables
-        self.current_player = 'X'
-        self.board = [['' for _ in range(3)] for _ in range(3)]
-        self.buttons = []
-        self.winning_line = None
-        
-        # Status label
-        self.status_label = QLabel(f"{self.player1_name}'s turn (X)")
-        self.status_label.setStyleSheet("""
-            QLabel {
-                color: #ECF0F1;
-                font-size: 24px;
-                font-weight: bold;
-                padding: 15px;
-                background-color: #34495E;
-                border-radius: 15px;
-            }
-        """)
-        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(self.status_label)
-        
-        # Create game board buttons
+        # Create game board buttons with adjusted styling
         button_style = """
             QPushButton {
                 background-color: #2C3E50;
                 color: #ECF0F1;
-                font-size: 48px;
+                font-size: 72px;  /* Increased font size */
                 font-weight: bold;
-                border: 3px solid #34495E;
+                border: 4px solid #34495E;
                 border-radius: 15px;
+                margin: 5px;  /* Added margin */
             }
             QPushButton:hover {
                 background-color: #243442;
@@ -135,13 +116,28 @@ class TicTacToeWindow(QMainWindow):
             button_row = []
             for col in range(3):
                 button = QPushButton()
-                button.setFixedSize(120, 120)  # Larger buttons
-                button.setFont(QFont('Arial', 48))
+                button.setFixedSize(150, 150)  # Increased button size
+                button.setFont(QFont('Arial', 72))  # Increased font size
                 button.setStyleSheet(button_style)
                 button.clicked.connect(lambda checked, r=row, c=col: self.make_move(r, c))
                 self.game_layout.addWidget(button, row, col)
                 button_row.append(button)
             self.buttons.append(button_row)
+
+        # Status label
+        self.status_label = QLabel(f"{self.player1_name}'s turn (X)")
+        self.status_label.setStyleSheet("""
+            QLabel {
+                color: #ECF0F1;
+                font-size: 20px;  /* Reduced from 24px */
+                font-weight: bold;
+                padding: 10px;    /* Reduced from 15px */
+                background-color: #34495E;
+                border-radius: 15px;
+            }
+        """)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(self.status_label)
         
         # Reset button
         reset_button = QPushButton("Reset Game")
