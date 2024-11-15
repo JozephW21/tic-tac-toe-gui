@@ -21,7 +21,7 @@ class PlayerStats:
         self.draws += 1
 
     def get_stats_string(self):
-        return f"W: {self.wins} L: {self.losses} D: {self.draws}"
+        return f"W: {self.wins} | L: {self.losses} | D: {self.draws}"
 
 class WinningLine(QWidget):
     def __init__(self, start_pos, end_pos, parent=None):
@@ -59,7 +59,7 @@ class TicTacToeWindow(QMainWindow):
             self.player1_name, self.player2_name = dialog.get_player_names()
         else:
             self.player1_name, self.player2_name = "Player 1", "Player 2"
-            
+        
         # Initialize player stats
         self.player1_stats = PlayerStats(self.player1_name)
         self.player2_stats = PlayerStats(self.player2_name)
@@ -68,7 +68,7 @@ class TicTacToeWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         main_layout = QVBoxLayout(self.central_widget)
-        main_layout.setSpacing(15)  # Reduced spacing
+        main_layout.setSpacing(10)  # Reduced spacing
         main_layout.setContentsMargins(30, 20, 30, 20)  # Reduced margins
         
         # Title
