@@ -28,6 +28,12 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         
+        # Initialize game variables
+        self.current_player = 'X'
+        self.board = [['' for _ in range(3)] for _ in range(3)]
+        self.buttons = []  # Initialize buttons list here
+        self.winning_line = None
+        
         # Get player names
         dialog = PlayerNameDialog()
         if dialog.exec():
@@ -123,7 +129,7 @@ class TicTacToeWindow(QMainWindow):
                 self.game_layout.addWidget(button, row, col)
                 button_row.append(button)
             self.buttons.append(button_row)
-
+        
         # Status label
         self.status_label = QLabel(f"{self.player1_name}'s turn (X)")
         self.status_label.setStyleSheet("""
@@ -170,7 +176,7 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-14 19:25:08 UTC")
+        timestamp_label = QLabel("Created: 2024-11-15 12:43:03 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
