@@ -21,14 +21,14 @@ class TicTacToeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tic Tac Toe")
-        self.setFixedSize(700, 900)  # Increased height significantly to accommodate all elements
+        self.setFixedSize(700, 900)
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2C3E50;
             }
         """)
         
-        # Initialize game variables
+        # Initialize game variables first
         self.current_player = 'X'
         self.board = [['' for _ in range(3)] for _ in range(3)]
         self.buttons = []  # Initialize buttons list here
@@ -45,17 +45,17 @@ class TicTacToeWindow(QMainWindow):
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
         main_layout = QVBoxLayout(self.central_widget)
-        main_layout.setSpacing(20)  # Reduced from 30 to 20
-        main_layout.setContentsMargins(40, 30, 40, 30)  # Adjusted margins
+        main_layout.setSpacing(15)  # Reduced spacing
+        main_layout.setContentsMargins(30, 20, 30, 20)  # Reduced margins
         
         # Title
         title = QLabel("Tic Tac Toe")
         title.setStyleSheet("""
             QLabel {
                 color: #3498DB;
-                font-size: 36px;
+                font-size: 32px;  /* Reduced font size */
                 font-weight: bold;
-                padding: 10px;
+                padding: 5px;
             }
         """)
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -66,13 +66,13 @@ class TicTacToeWindow(QMainWindow):
         player_frame.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
-                border-radius: 15px;
-                padding: 10px;
+                border-radius: 10px;
+                padding: 5px;
             }
             QLabel {
                 color: #ECF0F1;
-                font-size: 20px;
-                padding: 10px;
+                font-size: 16px;  /* Reduced font size */
+                padding: 5px;
             }
         """)
         info_layout = QGridLayout(player_frame)
@@ -89,13 +89,13 @@ class TicTacToeWindow(QMainWindow):
         self.game_container.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
-                border-radius: 15px;
-                padding: 30px;  /* Increased padding */
-                margin: 20px 0;  /* Added vertical margin */
+                border-radius: 10px;
+                padding: 20px;
+                margin: 10px 0;
             }
         """)
         self.game_layout = QGridLayout(self.game_container)
-        self.game_layout.setSpacing(15)  # Increased spacing between buttons
+        self.game_layout.setSpacing(10)
         main_layout.addWidget(self.game_container)
         
         # Create game board buttons with adjusted styling
@@ -103,11 +103,11 @@ class TicTacToeWindow(QMainWindow):
             QPushButton {
                 background-color: #2C3E50;
                 color: #ECF0F1;
-                font-size: 72px;  /* Increased font size */
+                font-size: 48px;  /* Reduced font size */
                 font-weight: bold;
-                border: 4px solid #34495E;
-                border-radius: 15px;
-                margin: 5px;  /* Added margin */
+                border: 3px solid #34495E;
+                border-radius: 10px;
+                margin: 3px;
             }
             QPushButton:hover {
                 background-color: #243442;
@@ -122,8 +122,8 @@ class TicTacToeWindow(QMainWindow):
             button_row = []
             for col in range(3):
                 button = QPushButton()
-                button.setFixedSize(150, 150)  # Increased button size
-                button.setFont(QFont('Arial', 72))  # Increased font size
+                button.setFixedSize(120, 120)  # Reduced button size
+                button.setFont(QFont('Arial', 48))
                 button.setStyleSheet(button_style)
                 button.clicked.connect(lambda checked, r=row, c=col: self.make_move(r, c))
                 self.game_layout.addWidget(button, row, col)
@@ -135,11 +135,11 @@ class TicTacToeWindow(QMainWindow):
         self.status_label.setStyleSheet("""
             QLabel {
                 color: #ECF0F1;
-                font-size: 20px;  /* Reduced from 24px */
+                font-size: 18px;
                 font-weight: bold;
-                padding: 10px;    /* Reduced from 15px */
+                padding: 8px;
                 background-color: #34495E;
-                border-radius: 15px;
+                border-radius: 10px;
             }
         """)
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -151,11 +151,11 @@ class TicTacToeWindow(QMainWindow):
             QPushButton {
                 background-color: #3498DB;
                 color: white;
-                padding: 15px;
-                font-size: 20px;
+                padding: 10px;
+                font-size: 16px;
                 font-weight: bold;
-                border-radius: 15px;
-                min-width: 200px;
+                border-radius: 10px;
+                min-width: 150px;
             }
             QPushButton:hover {
                 background-color: #2980B9;
@@ -172,11 +172,11 @@ class TicTacToeWindow(QMainWindow):
             }
             QLabel {
                 color: #95A5A6;
-                font-size: 14px;
+                font-size: 12px;
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-15 12:43:03 UTC")
+        timestamp_label = QLabel("Created: 2024-11-15 12:53:01 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
