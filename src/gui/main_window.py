@@ -4,6 +4,25 @@ from PyQt6.QtCore import Qt, QLine, QPoint
 from PyQt6.QtGui import QFont, QPainter, QPen, QColor
 from .player_dialog import PlayerNameDialog
 
+class PlayerStats:
+    def __init__(self, name):
+        self.name = name
+        self.wins = 0
+        self.losses = 0
+        self.draws = 0
+
+    def add_win(self):
+        self.wins += 1
+
+    def add_loss(self):
+        self.losses += 1
+
+    def add_draw(self):
+        self.draws += 1
+
+    def get_stats_string(self):
+        return f"W: {self.wins} L: {self.losses} D: {self.draws}"
+
 class WinningLine(QWidget):
     def __init__(self, start_pos, end_pos, parent=None):
         super().__init__(parent)
@@ -40,6 +59,10 @@ class TicTacToeWindow(QMainWindow):
             self.player1_name, self.player2_name = dialog.get_player_names()
         else:
             self.player1_name, self.player2_name = "Player 1", "Player 2"
+            
+        # Initialize player stats
+        self.player1_stats = PlayerStats(self.player1_name)
+        self.player2_stats = PlayerStats(self.player2_name)
         
         # Create central widget and layout
         self.central_widget = QWidget()
@@ -61,13 +84,13 @@ class TicTacToeWindow(QMainWindow):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(title)
         
-        # Player info layout
+        # Player info layout with stats
         player_frame = QFrame()
         player_frame.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
                 border-radius: 10px;
-                padding: 8px;
+                padding: 12px;
             }
             QLabel {
                 color: #ECF0F1;
@@ -76,12 +99,23 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QGridLayout(player_frame)
+        
+        # Player names and stats
         self.p1_label = QLabel(f"{self.player1_name} (X)")
         self.p2_label = QLabel(f"{self.player2_name} (O)")
+        self.p1_stats_label = QLabel(self.player1_stats.get_stats_string())
+        self.p2_stats_label = QLabel(self.player2_stats.get_stats_string())
+        
         self.p1_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.p2_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.p1_stats_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.p2_stats_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
         info_layout.addWidget(self.p1_label, 0, 0)
         info_layout.addWidget(self.p2_label, 0, 1)
+        info_layout.addWidget(self.p1_stats_label, 1, 0)
+        info_layout.addWidget(self.p2_stats_label, 1, 1)
+        
         main_layout.addWidget(player_frame)
         
         # Game container with adjusted spacing
@@ -176,7 +210,7 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-15 13:05:11 UTC")
+        timestamp_label = QLabel("Created: 2024-11-15 13:20:20 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -198,10 +232,22 @@ class TicTacToeWindow(QMainWindow):
             if self.check_winner():
                 winner_name = self.player1_name if self.current_player == 'X' else self.player2_name
                 self.status_label.setText(f"{winner_name} wins!")
+                # Update stats for win/loss
+                if self.current_player == 'X':
+                    self.player1_stats.add_win()
+                    self.player2_stats.add_loss()
+                else:
+                    self.player2_stats.add_win()
+                    self.player1_stats.add_loss()
+                self.update_stats_display()
                 self.draw_winning_line()
                 self.disable_board()
             elif self.is_board_full():
                 self.status_label.setText("Game Draw!")
+                # Update stats for draw
+                self.player1_stats.add_draw()
+                self.player2_stats.add_draw()
+                self.update_stats_display()
                 self.disable_board()
             else:
                 # Switch players
@@ -209,6 +255,11 @@ class TicTacToeWindow(QMainWindow):
                 current_name = self.player2_name if self.current_player == 'O' else self.player1_name
                 self.status_label.setText(f"{current_name}'s turn ({self.current_player})")
                 self.update_player_labels()
+
+    def update_stats_display(self):
+        """Update the stats display labels"""
+        self.p1_stats_label.setText(self.player1_stats.get_stats_string())
+        self.p2_stats_label.setText(self.player2_stats.get_stats_string())
 
     def draw_winning_line(self):
         """Draw a line through the winning combination"""
