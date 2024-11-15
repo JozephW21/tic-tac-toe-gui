@@ -21,17 +21,17 @@ class TicTacToeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tic Tac Toe")
-        self.setFixedSize(700, 900)
+        self.setFixedSize(600, 800)  # Adjusted size
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2C3E50;
             }
         """)
         
-        # Initialize game variables first
+        # Initialize game variables
         self.current_player = 'X'
         self.board = [['' for _ in range(3)] for _ in range(3)]
-        self.buttons = []  # Initialize buttons list here
+        self.buttons = []  # Moved initialization here
         self.winning_line = None
         
         # Get player names
@@ -53,7 +53,7 @@ class TicTacToeWindow(QMainWindow):
         title.setStyleSheet("""
             QLabel {
                 color: #3498DB;
-                font-size: 32px;  /* Reduced font size */
+                font-size: 32px;
                 font-weight: bold;
                 padding: 5px;
             }
@@ -67,11 +67,11 @@ class TicTacToeWindow(QMainWindow):
             QFrame {
                 background-color: #34495E;
                 border-radius: 10px;
-                padding: 5px;
+                padding: 8px;
             }
             QLabel {
                 color: #ECF0F1;
-                font-size: 16px;  /* Reduced font size */
+                font-size: 16px;
                 padding: 5px;
             }
         """)
@@ -103,7 +103,7 @@ class TicTacToeWindow(QMainWindow):
             QPushButton {
                 background-color: #2C3E50;
                 color: #ECF0F1;
-                font-size: 48px;  /* Reduced font size */
+                font-size: 48px;
                 font-weight: bold;
                 border: 3px solid #34495E;
                 border-radius: 10px;
@@ -123,7 +123,7 @@ class TicTacToeWindow(QMainWindow):
             for col in range(3):
                 button = QPushButton()
                 button.setFixedSize(120, 120)  # Reduced button size
-                button.setFont(QFont('Arial', 48))
+                button.setFont(QFont('Arial', 48))  # Reduced font size
                 button.setStyleSheet(button_style)
                 button.clicked.connect(lambda checked, r=row, c=col: self.make_move(r, c))
                 self.game_layout.addWidget(button, row, col)
@@ -151,11 +151,11 @@ class TicTacToeWindow(QMainWindow):
             QPushButton {
                 background-color: #3498DB;
                 color: white;
-                padding: 10px;
+                padding: 12px;
                 font-size: 16px;
                 font-weight: bold;
                 border-radius: 10px;
-                min-width: 150px;
+                min-width: 160px;
             }
             QPushButton:hover {
                 background-color: #2980B9;
@@ -176,7 +176,7 @@ class TicTacToeWindow(QMainWindow):
             }
         """)
         info_layout = QVBoxLayout(info_frame)
-        timestamp_label = QLabel("Created: 2024-11-15 12:53:01 UTC")
+        timestamp_label = QLabel("Created: 2024-11-15 13:05:11 UTC")
         creator_label = QLabel("Created by: JozephW21")
         timestamp_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         creator_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -214,15 +214,12 @@ class TicTacToeWindow(QMainWindow):
         """Draw a line through the winning combination"""
         winning_combo = self.get_winning_combination()
         if winning_combo:
-            # Remove existing line if present
             if self.winning_line:
                 self.winning_line.deleteLater()
             
-            # Calculate start and end positions for the line
             start_button = self.buttons[winning_combo[0][0]][winning_combo[0][1]]
             end_button = self.buttons[winning_combo[2][0]][winning_combo[2][1]]
             
-            # Get the global positions relative to the game container
             start_global_pos = start_button.mapTo(self.game_container, 
                                                 QPoint(start_button.width()//2, 
                                                       start_button.height()//2))
@@ -230,7 +227,6 @@ class TicTacToeWindow(QMainWindow):
                                             QPoint(end_button.width()//2, 
                                                   end_button.height()//2))
             
-            # Create and show the winning line
             self.winning_line = WinningLine(start_global_pos, end_global_pos, self.game_container)
             self.winning_line.setGeometry(0, 0, 
                                         self.game_container.width(), 
