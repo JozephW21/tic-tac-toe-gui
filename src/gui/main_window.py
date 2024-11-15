@@ -1,8 +1,10 @@
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QPushButton, 
-                           QWidget, QLabel, QVBoxLayout, QFrame, QHBoxLayout)
-from PyQt6.QtCore import Qt, QLine, QPoint
+                           QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame)
+from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QFont, QPainter, QPen, QColor
 from .player_dialog import PlayerNameDialog
+
+# Keep PlayerStats and WinningLine classes as they are...
 
 class PlayerStats:
     def __init__(self, name):
@@ -282,7 +284,6 @@ class TicTacToeWindow(QMainWindow):
         self.p2_stats_label.setText(self.player2_stats.get_stats_string())
 
     def play_again(self):
-        """Reset the game board but keep the same players and their scores"""
         if self.winning_line:
             self.winning_line.deleteLater()
             self.winning_line = None
@@ -298,10 +299,11 @@ class TicTacToeWindow(QMainWindow):
         self.status_label.setText(f"{self.player1_name}'s turn (X)")
         self.update_player_labels()
 
-        def new_game(self):
-            if self.winning_line:
-                self.winning_line.deleteLater()
-                self.winning_line = None
+    def new_game(self):
+        """Start a completely new game with new players"""
+        if self.winning_line:
+            self.winning_line.deleteLater()
+            self.winning_line = None
             
         dialog = PlayerNameDialog()
         if dialog.exec():
