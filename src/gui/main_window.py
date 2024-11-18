@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (QMainWindow, QGridLayout, QPushButton, 
                            QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame)
-from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtCore import Qt, QTimer, QPoint 
 from PyQt6.QtGui import QFont, QPainter, QPen, QColor
 from .player_dialog import PlayerNameDialog
 
@@ -116,6 +116,53 @@ class TicTacToeWindow(QMainWindow):
         info_layout.addWidget(self.p1_stats_label, 1, 0)
         info_layout.addWidget(self.p2_stats_label, 1, 1)
         main_layout.addWidget(player_frame)
+
+        # Create player info layout with timer
+        info_layout = QGridLayout(player_frame)
+        
+        # Player names and stats (existing code)
+        self.p1_label = QLabel(f"{self.player1_name} (X)")
+        self.p2_label = QLabel(f"{self.player2_name} (O)")
+        self.p1_stats_label = QLabel(self.player1_stats.get_stats_string())
+        self.p2_stats_label = QLabel(self.player2_stats.get_stats_string())
+        
+        # Add timer label
+        self.timer_label = QLabel("00:00")
+        self.timer_label.setStyleSheet("""
+            QLabel {
+                color: #3498DB;
+                font-size: 24px;
+                font-weight: bold;
+                padding: 5px;
+                background-color: #2C3E50;
+                border-radius: 8px;
+                min-width: 100px;
+                text-align: center;
+            }
+        """)
+        self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # Setup timer
+        self.game_timer = QTimer()
+        self.game_timer.timeout.connect(self.update_timer)
+        self.seconds_elapsed = 0
+        
+        # Layout arrangement
+        info_layout.addWidget(self.p1_label, 0, 0)
+        info_layout.addWidget(self.timer_label, 0, 1)
+        info_layout.addWidget(self.p2_label, 0, 2)
+        info_layout.addWidget(self.p1_stats_label, 1, 0)
+        info_layout.addWidget(self.p2_stats_label, 1, 2)
+        
+        # Start timer
+        self.game_timer.start(1000)  # Update every second
+
+        def update_timer(self):
+            """Update the timer display"""
+            self.seconds_elapsed += 1
+            minutes = self.seconds_elapsed // 60
+            seconds = self.seconds_elapsed % 60
+            self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
         
         # Game container with adjusted spacing
         self.game_container = QFrame()
@@ -255,6 +302,8 @@ class TicTacToeWindow(QMainWindow):
             if self.check_winner():
                 winner_name = self.player1_name if self.current_player == 'X' else self.player2_name
                 self.status_label.setText(f"{winner_name} wins!")
+                # Stop timer when game ends
+                self.game_timer.stop()
                 # Update stats
                 if self.current_player == 'X':
                     self.player1_stats.add_win()
@@ -267,6 +316,8 @@ class TicTacToeWindow(QMainWindow):
                 self.disable_board()
             elif self.is_board_full():
                 self.status_label.setText("Game Draw!")
+                # Stop timer when game ends
+                self.game_timer.stop()
                 self.player1_stats.add_draw()
                 self.player2_stats.add_draw()
                 self.update_stats_display()
@@ -283,12 +334,18 @@ class TicTacToeWindow(QMainWindow):
         self.p2_stats_label.setText(self.player2_stats.get_stats_string())
 
     def play_again(self):
+        """Reset the game board but keep the same players and their scores"""
         if self.winning_line:
             self.winning_line.deleteLater()
             self.winning_line = None
         
         self.current_player = 'X'
         self.board = [['' for _ in range(3)] for _ in range(3)]
+        
+        # Reset timer
+        self.seconds_elapsed = 0
+        self.timer_label.setText("00:00")
+        self.game_timer.start()
         
         for row in self.buttons:
             for button in row:
@@ -310,9 +367,12 @@ class TicTacToeWindow(QMainWindow):
             self.player1_stats = PlayerStats(self.player1_name)
             self.player2_stats = PlayerStats(self.player2_name)
             
-            # Reset game state
+            # Reset game state and timer
             self.current_player = 'X'
             self.board = [['' for _ in range(3)] for _ in range(3)]
+            self.seconds_elapsed = 0
+            self.timer_label.setText("00:00")
+            self.game_timer.start()
             
             # Clear and enable all buttons
             for row in self.buttons:
