@@ -70,6 +70,61 @@ class TicTacToeWindow(QMainWindow):
         main_layout = QVBoxLayout(self.central_widget)
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(30, 20, 30, 20)
+
+        # Player info frame
+        self.player_frame = QFrame()
+        self.player_frame.setStyleSheet("""
+            QFrame {
+                background-color: #34495E;
+                border-radius: 10px;
+                padding: 8px;
+            }
+            QLabel {
+                color: #ECF0F1;
+                font-size: 16px;
+                padding: 5px;
+            }
+        """)
+        
+        # Create layout for player frame
+        player_layout = QGridLayout()
+        self.player_frame.setLayout(player_layout)
+        
+        # Player names and stats
+        self.p1_label = QLabel(f"{self.player1_name} (X)")
+        self.p2_label = QLabel(f"{self.player2_name} (O)")
+        self.p1_stats_label = QLabel(self.player1_stats.get_stats_string())
+        self.p2_stats_label = QLabel(self.player2_stats.get_stats_string())
+        
+        # Add timer label
+        self.timer_label = QLabel("00:00")
+        self.timer_label.setStyleSheet("""
+            QLabel {
+                color: #3498DB;
+                font-size: 24px;
+                font-weight: bold;
+                padding: 5px;
+                background-color: #2C3E50;
+                border-radius: 8px;
+                min-width: 100px;
+                text-align: center;
+            }
+        """)
+        self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # Setup timer
+        self.game_timer = QTimer()
+        self.seconds_elapsed = 0
+        
+        # Layout arrangement
+        player_layout.addWidget(self.p1_label, 0, 0)
+        player_layout.addWidget(self.timer_label, 0, 1)
+        player_layout.addWidget(self.p2_label, 0, 2)
+        player_layout.addWidget(self.p1_stats_label, 1, 0)
+        player_layout.addWidget(self.p2_stats_label, 1, 2)
+        
+        # Add player frame to main layout
+        main_layout.addWidget(self.player_frame)
         
         # Title
         title = QLabel("Tic Tac Toe")
@@ -157,12 +212,18 @@ class TicTacToeWindow(QMainWindow):
         # Start timer
         self.game_timer.start(1000)  # Update every second
 
-        def update_timer(self):
-            """Update the timer display"""
-            self.seconds_elapsed += 1
-            minutes = self.seconds_elapsed // 60
-            seconds = self.seconds_elapsed % 60
-            self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
+    def update_timer(self):
+        """Update the timer display"""
+        self.seconds_elapsed += 1
+        minutes = self.seconds_elapsed // 60
+        seconds = self.seconds_elapsed % 60
+        self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
+
+        # Setup timer
+        self.game_timer = QTimer()
+        self.seconds_elapsed = 0
+        self.game_timer.timeout.connect(self.update_timer)  # Connect after method is defined
+        self.game_timer.start(1000)  # Start timer
         
         # Game container with adjusted spacing
         self.game_container = QFrame()
