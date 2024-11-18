@@ -4,8 +4,6 @@ from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QFont, QPainter, QPen, QColor
 from .player_dialog import PlayerNameDialog
 
-# Keep PlayerStats and WinningLine classes as they are...
-
 class PlayerStats:
     def __init__(self, name):
         self.name = name
@@ -42,7 +40,7 @@ class TicTacToeWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tic Tac Toe")
-        self.setFixedSize(600, 800)
+        self.setFixedSize(700, 900)  # Increased window size
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #2C3E50;
@@ -119,21 +117,22 @@ class TicTacToeWindow(QMainWindow):
         info_layout.addWidget(self.p2_stats_label, 1, 1)
         main_layout.addWidget(player_frame)
         
-        # Game container
+        # Game container with adjusted spacing
         self.game_container = QFrame()
         self.game_container.setStyleSheet("""
             QFrame {
                 background-color: #34495E;
                 border-radius: 10px;
-                padding: 20px;
-                margin: 10px 0;
+                padding: 30px;  # Increased padding
+                margin: 20px 0;  # Increased margin
             }
         """)
         self.game_layout = QGridLayout(self.game_container)
-        self.game_layout.setSpacing(10)
+        self.game_layout.setSpacing(20)  # Increased spacing between buttons
+        self.game_layout.setContentsMargins(20, 20, 20, 20)  # Add margins around the grid
         main_layout.addWidget(self.game_container)
         
-        # Create game board buttons
+        # Create game board buttons with larger size
         button_style = """
             QPushButton {
                 background-color: #2C3E50;
@@ -142,7 +141,7 @@ class TicTacToeWindow(QMainWindow):
                 font-weight: bold;
                 border: 3px solid #34495E;
                 border-radius: 10px;
-                margin: 3px;
+                margin: 5px;  # Increased margin
             }
             QPushButton:hover {
                 background-color: #243442;
@@ -157,8 +156,8 @@ class TicTacToeWindow(QMainWindow):
             button_row = []
             for col in range(3):
                 button = QPushButton()
-                button.setFixedSize(120, 120)
-                button.setFont(QFont('Arial', 48))
+                button.setFixedSize(150, 150)  # Increased button size
+                button.setFont(QFont('Arial', 60))  # Increased font size
                 button.setStyleSheet(button_style)
                 button.clicked.connect(lambda checked, r=row, c=col: self.make_move(r, c))
                 self.game_layout.addWidget(button, row, col)
